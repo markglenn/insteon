@@ -1,7 +1,17 @@
 defmodule Insteon.Parser do
   use Bitwise
 
-  # 0x50 - Standard Message Received
+  @doc """
+  0x50 - Standard Message Received
+
+  What it does:         Informs you of an incoming Standard-length INSTEON message.
+  When you'll get this: A Standard-length INSTEON message is received from either a Controller
+                        or Responder that you are ALL-Linked to.
+  What you'll get:      11 bytes.
+  LED indication:       The LED will blink during INSTEON reception.
+  Related Commands:     IM 0x51 INSTEON Extended Message Received
+                        IM 0x52 X10 Received
+  """
   def parse(<<0x02, 0x50, body :: binary-size(9), tail :: binary>>) do
     <<from :: binary-size(3), to :: binary-size(3), flags, command1, command2>> = body
 
@@ -19,7 +29,17 @@ defmodule Insteon.Parser do
     }
   end
 
-  # 0x51 - Extended Message Received
+  @doc """
+  0x51 - Extended Message Received
+
+  What it does:         Informs you of an incoming Extended-length INSTEON message.
+  When you'll get this: An Extended-length INSTEON message is received from either a Controller
+                        or Responder that you are ALL-Linked to.
+  What you'll get:      25 bytes.
+  LED indication:       The LED will blink during INSTEON reception.
+  Related Commands:     IM 0x50 INSTEON Standard Message Received
+                        IM 0x52 X10 Received
+  """
   def parse(<<0x02, 0x51, body :: binary-size(23), tail :: binary>>) do
     <<from :: binary-size(3), to :: binary-size(3), flags, command1, command2, user_data :: binary-size(14)>> = body
 
@@ -38,7 +58,17 @@ defmodule Insteon.Parser do
     }
   end
 
-  # 0x52 - X10 Received
+  @doc """
+  0x52 - X10 Received
+
+  What it does:         Informs you of an X10 byte detected on the powerline.
+  When you'll get this: Any X10 traffic is detected on the powerline.
+  What you'll get:      4 bytes.
+  LED indication:       The LED will blink during X10 reception.
+  Related Commands:     IM 0x63 Send X10
+                        IM 0x50 INSTEON Standard Message Received
+                        IM 0x51 INSTEON Extended Message Received
+  """
   def parse(<<0x02, 0x52, raw_x10, flags, tail :: binary>>) do
     {
       { :x10_received, %{raw_x10: raw_x10, flags: flags} },
@@ -46,7 +76,17 @@ defmodule Insteon.Parser do
     }
   end
 
-  # 0x53 - All-Linking Completed
+  @doc """
+  0x53 - All-Linking Completed
+
+  What it does:         Informs you of a successful ALL-Linking procedure.
+  When you'll get this: An ALL-Linking procedure has been completed between the IM and
+                        either a Controller or Responder.
+  What you'll get:      10 bytes.
+  LED indication:       None.
+  Related Commands:     IM 0x64 Start ALL-Linking
+                        IM 0x65 Cancel ALL-Linking
+  """
   def parse(<<0x02, 0x53, link_code, group, device_id :: binary-size(3), device_category, device_subcategory, firmware_version, tail :: binary>>) do
     {
       {
