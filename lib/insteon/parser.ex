@@ -207,7 +207,19 @@ defmodule Insteon.Parser do
     }
   end
 
-  # 0x64 - Start ALL-Linking
+  @doc """
+  0x64 - Start ALL-Linking
+
+  What it does:         Puts the IM into ALL-Linking mode without using the SET Button
+  What you send:        4 bytes.
+  What you'll get back: 5 bytes for this Command response and then an additional 10 bytes in
+                        an ALL- Linking Completed message once a successful ALL-Link has
+                        been established.
+  LED indication:       The LED will blink continuously at a rate of 1⁄2 second on and 1⁄2
+                        second off until the ALL-Link is completed or canceled.
+  Related Commands:     IM 0x53 ALL-Linking Completed
+                        IM 0x65 Cancel ALL-Linking
+  """
   def parse(<<0x02, 0x64, code, group, ack, tail :: binary>>) do
     {
       {
@@ -218,7 +230,18 @@ defmodule Insteon.Parser do
     }
   end
 
-  # 0x65 - Cancel ALL-Linking
+  @doc """
+  0x65 - Cancel ALL-Linking
+
+  What it does:         Cancels the ALL-Linking process that was started either by holding
+                        down the IM’s SET Button or by sending a Start ALL-Linking Command
+                        to the IM.
+  What you send:        2 bytes.
+  What you'll get back: 3 bytes.
+  LED indication:       The LED will stop blinking.
+  Related Commands:     IM 0x64 Start ALL-Linking
+                        IM 0x54 Button Event Report
+  """
   def parse(<<0x02, 0x65, ack, tail :: binary>>) do
     { { :cancel_all_linking, %{ status: status(ack) } }, tail }
   end
