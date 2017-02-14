@@ -191,5 +191,79 @@ defmodule Insteon.ParserTest do
     assert message == { :send_x10, %{ raw_x10: 3, flags: 4, status: :ack } }
     assert {{_, %{status: :nack}}, _} = Parser.parse(<<0x02, 0x63, 3, 4, 0x15>>)
   end
+
+  test "0x64 - Start ALL-Linking" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x64, 3, 4, 0x06, 0xFF>>)
+
+    assert message == { :start_all_linking, %{ code: 3, group: 4, status: :ack } }
+    assert {{_, %{status: :nack}}, _} = Parser.parse(<<0x02, 0x63, 3, 4, 0x15>>)
+  end
+
+  test "0x65 - Cancel ALL-Linking" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x65, 0x06, 0xFF>>)
+
+    assert message == { :cancel_all_linking, %{ status: :ack } }
+    assert {{_, %{status: :nack}}, _} = Parser.parse(<<0x02, 0x65, 0x15>>)
+  end
+
+  test "0x66 - Set Host Device Category" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x66, 3, 4, 0xFF, 0x06, 0xFF>>)
+    assert message == { :set_host_device_category, %{ category: 3, subcategory: 4, firmware_version: 0xFF, status: :ack } }
+  end
+
+  test "0x67 - Reset the IM" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x67, 0x06, 0xFF>>)
+    assert message == { :reset_the_im, %{ status: :ack } }
+  end
+
+  test "0x68 - Set Insteon ACK Message Byte" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x68, 3, 0x06, 0xFF>>)
+    assert message == { :set_insteon_ack_message_byte, %{ command2: 3, status: :ack } }
+  end
+
+  test "0x69 - Get First ALL-Link Record" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x69, 0x06, 0xFF>>)
+    assert message == { :get_first_all_link_record, %{ status: :ack } }
+  end
+
+  test "0x6A - Get Next ALL-Link Record" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x6A, 0x06, 0xFF>>)
+    assert message == { :get_next_all_link_record, %{ status: :ack } }
+  end
+
+  test "0x6B - Set IM Configuration" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x6B, 1, 0x06, 0xFF>>)
+    assert message == { :set_im_configuration, %{ flags: 1, status: :ack } }
+  end
+
+  test "0x6C - Get ALL-Link Record for Sender" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x6C, 0x06, 0xFF>>)
+    assert message == { :get_all_link_record_for_sender, %{ status: :ack } }
+  end
+
+  test "0x6D - LED On" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x6D, 0x06, 0xFF>>)
+    assert message == { :led_on, %{ status: :ack } }
+  end
+
+  test "0x6E - LED Off" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x6E, 0x06, 0xFF>>)
+    assert message == { :led_off, %{ status: :ack } }
+  end
+
+  test "0x6F - Manage ALL-Link Record" do
+    {message, <<0xFF>>} = Parser.parse(<<0x02, 0x6F, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0x06, 0xFF>>)
+    assert message == {
+      :manage_all_link_record,
+      %{
+        control_code: 3,
+        flags: 4,
+        group: 5,
+        id: <<6, 7, 8>>,
+        data: <<9, 10, 11>>,
+        status: :ack
+      }
+    }
+  end
 end
 

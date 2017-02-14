@@ -127,7 +127,16 @@ defmodule Insteon.Parser do
   end
 
   # 0x58 - ALL-Link Cleanup Status Report
-  def parse(<<0x02, 0x58, ack, tail :: binary>>), do: {{:all_link_cleanup_status_report, %{status: status(ack)}}, tail}
+  def parse(<<0x02, 0x58, ack, tail :: binary>>) do
+    {
+      {
+        :all_link_cleanup_status_report,
+        %{status: status(ack)}
+      },
+      tail
+    }
+  end
+
 
   # 0x60 - Get IM Info
   def parse(<<0x02, 0x60, body :: binary-size(7), tail :: binary>>) do
@@ -187,11 +196,102 @@ defmodule Insteon.Parser do
     }
   end
 
+  # 0x63 - Send X10 
   def parse(<<0x02, 0x63, raw_x10, flags, ack, tail :: binary>>) do
     {
       {
         :send_x10,
         %{ raw_x10: raw_x10, flags: flags, status: status(ack) }
+      },
+      tail
+    }
+  end
+
+  # 0x64 - Start ALL-Linking
+  def parse(<<0x02, 0x64, code, group, ack, tail :: binary>>) do
+    {
+      {
+        :start_all_linking,
+        %{ code: code, group: group, status: status(ack) }
+      },
+      tail
+    }
+  end
+
+  # 0x65 - Cancel ALL-Linking
+  def parse(<<0x02, 0x65, ack, tail :: binary>>) do
+    { { :cancel_all_linking, %{ status: status(ack) } }, tail }
+  end
+
+  # 0x66 - Set Host Device Category 
+  def parse(<<0x02, 0x66, category, subcategory, firmware_version, ack, tail :: binary>>) do
+    {
+      {
+        :set_host_device_category,
+        %{
+          category: category,
+          subcategory: subcategory,
+          firmware_version: firmware_version,
+          status: status(ack)
+        }
+      },
+      tail
+    }
+  end
+
+  # 0x67 - Reset the IM
+  def parse(<<0x02, 0x67, ack, tail :: binary>>) do
+    { { :reset_the_im, %{ status: status(ack) } }, tail }
+  end
+
+  # 0x68 - Set Insteon ACK Message Byte
+  def parse(<<0x02, 0x68, command2, ack, tail :: binary>>) do
+    { { :set_insteon_ack_message_byte, %{ command2: command2, status: status(ack) } }, tail }
+  end
+
+  # 0x69 - Get First ALL-Link Record
+  def parse(<<0x02, 0x69, ack, tail :: binary>>) do
+    { { :get_first_all_link_record, %{ status: status(ack) } }, tail }
+  end
+
+  # 0x6A - Get Next ALL-Link Record
+  def parse(<<0x02, 0x6A, ack, tail :: binary>>) do
+    { { :get_next_all_link_record, %{ status: status(ack) } }, tail }
+  end
+
+  # 0x6B - Set IM Configuration
+  def parse(<<0x02, 0x6B, flags, ack, tail :: binary>>) do
+    { { :set_im_configuration, %{ flags: flags, status: status(ack) } }, tail }
+  end
+
+  # 0x6C - Get ALL-Link Record for Sender
+  def parse(<<0x02, 0x6C, ack, tail :: binary>>) do
+    { { :get_all_link_record_for_sender, %{ status: status(ack) } }, tail }
+  end
+
+  # 0x6D - LED On
+  def parse(<<0x02, 0x6D, ack, tail :: binary>>) do
+    { { :led_on, %{ status: status(ack) } }, tail }
+  end
+
+  # 0x6E - LED Off
+  def parse(<<0x02, 0x6E, ack, tail :: binary>>) do
+    { { :led_off, %{ status: status(ack) } }, tail }
+  end
+
+  # 0x6F - Manage ALL-Link Record
+  def parse(<<0x02, 0x6F, control_code, flags, group, id :: binary-size(3), data :: binary-size(3), ack, tail :: binary>>) do
+    {
+      {
+        :manage_all_link_record,
+        %{
+          control_code: control_code,
+          flags: flags,
+          group: group,
+          id: id,
+          data: data,
+          status: status(ack)
+        }
       },
       tail
     }
