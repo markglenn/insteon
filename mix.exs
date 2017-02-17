@@ -15,7 +15,7 @@ defmodule Insteon.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger]]
+    [extra_applications: [:logger, :nerves_uart]]
   end
 
   # Dependencies can be Hex packages:
@@ -28,6 +28,6 @@ defmodule Insteon.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [{:nerves_uart, "~> 0.1.1"}]
   end
 end
