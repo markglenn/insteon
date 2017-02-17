@@ -1,6 +1,8 @@
 defmodule Insteon.Modem do
   use GenServer
   
+  @port_options %{speed: 19200, flow_control: :none}
+
   def start_link do
     GenServer.start_link(__MODULE__, :ok)
   end
@@ -14,7 +16,7 @@ defmodule Insteon.Modem do
 
     {:ok, pid} = Nerves.UART.start_link
 
-    :ok = Nerves.UART.open(pid, port, speed: 19200, flow_control: :none)
+    :ok = Nerves.UART.open(pid, port, @port_options)
 
     {:ok, {pid, ""}}
   end
