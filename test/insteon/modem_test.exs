@@ -11,8 +11,9 @@ defmodule Insteon.ModemTest do
   end
 
   test "handles error from serial port" do
-    assert Modem.handle_info({:nerves_uart, self(), {:error, "Failed"}}, {self(), <<0x01>>}) ==
-      {:stop, "Failed", {self(), <<>>}}
+    pid = self()
+    assert Modem.handle_info({:nerves_uart, pid, {:error, "Failed"}}, {pid, <<0x01>>}) ==
+      {:stop, "Failed", {pid, <<>>}}
   end
 end
 

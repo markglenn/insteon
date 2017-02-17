@@ -3,6 +3,24 @@ defmodule Insteon.ParserTest do
 
   use ExUnit.Case, async: true
 
+  describe "parse_messages" do
+    test "parses incomplete message" do
+      assert {[], <<0x02>>} == Parser.parse_messages(<<0x02>>)
+    end
+
+    test "parses single message" do
+      {[_], <<0x02>>} = Parser.parse_messages(<<0x02, 0x65, 0x06, 0x02>>)
+    end
+
+    test "parses multiple messages" do
+      {[_, _], <<0x02>>} = Parser.parse_messages(<<0x02, 0x65, 0x06, 0x02, 0x65, 0x15, 0x02>>)
+    end
+
+    test "parses single message with no extra data" do
+      {[_], ""} = Parser.parse_messages(<<0x02, 0x65, 0x06>>)
+    end
+  end
+
   test "Incomplete message received" do
     assert {nil, <<0x02>>} == Parser.parse(<<0x02>>)
   end

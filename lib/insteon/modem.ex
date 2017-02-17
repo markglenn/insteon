@@ -1,6 +1,7 @@
 defmodule Insteon.Modem do
   use GenServer
   
+  # Insteon modem configuration
   @port_options %{speed: 19200, flow_control: :none}
 
   def start_link do

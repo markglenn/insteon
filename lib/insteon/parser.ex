@@ -1,6 +1,13 @@
 defmodule Insteon.Parser do
   use Bitwise
 
+  def parse_messages(data) do
+    do_parse_messages(parse(data), [])
+  end
+
+  defp do_parse_messages({nil, tail}, messages), do: {messages, tail}
+  defp do_parse_messages({m, tail}, messages), do: do_parse_messages(parse(tail), [m | messages])
+
   @doc """
   0x50 - Standard Message Received
 
@@ -360,10 +367,8 @@ defmodule Insteon.Parser do
     }
   end
 
-  # Incomplete message
-  def parse(<<0x02, _ :: binary>> = msg) do
-    { nil, msg }
-  end
+  # Incomplete messages
+  def parse(msg), do: { nil, msg }
 
   defp status(0x06), do: :ack
   defp status(0x15), do: :nack
