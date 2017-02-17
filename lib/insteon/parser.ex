@@ -368,7 +368,8 @@ defmodule Insteon.Parser do
   end
 
   # Incomplete messages
-  def parse(msg), do: { nil, msg }
+  def parse(<<0x02, _ :: binary>> = msg), do: { nil, msg }
+  def parse(""), do: {nil, ""}
 
   defp status(0x06), do: :ack
   defp status(0x15), do: :nack
