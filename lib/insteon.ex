@@ -13,6 +13,8 @@ defmodule Insteon do
 
   """
   def hello do
-    :world
+    {:ok, pid} = Insteon.Modem.start_link
+
+    Insteon.Modem.get_info(pid)
   end
 end
